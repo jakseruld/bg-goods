@@ -6,7 +6,7 @@
     <title>Admin Panel - BG Good</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #1a1a1a;
@@ -101,6 +101,16 @@
             display: none;
             z-index: 1000;
         }
+        .phone-box {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -172,13 +182,14 @@
             <option value="2027">2027</option>
         </select>
         <input type="text" id="new-event" placeholder="Enter new event">
+        <input type="datetime-local" id="schedule-datetime" placeholder="Schedule date and time">
         <button onclick="addShow()">Add Show</button>
         <div class="shows-list" id="shows-list">
             <!-- Show items will be populated here by JavaScript -->
         </div>
         <button onclick="logout()">Logout</button>
         <div class="support-contact">
-            For Support Contact <a href="mailto:josh@akseruld.com">Joshua Akseruld</a>
+            Made by and contact for support <a href="mailto:josh@akseruld.com">Joshua Akseruld</a>
         </div>
     </div>
 
@@ -188,6 +199,10 @@
 
     <div class="notification" id="remove-notification" style="background: #e53e3e;">
         Event removed!
+    </div>
+
+    <div class="phone-box">
+        Contact: 646-222-0024
     </div>
 
     <script type="module">
@@ -233,10 +248,10 @@
                 querySnapshot.forEach((doc) => {
                     const showData = doc.data();
                     const showDate = new Date(showData.date);
-                    if (showDate >= currentDate) {
+                    if (showData.scheduledDate && new Date(showData.scheduledDate) <= currentDate) {
                         shows.push({ id: doc.id, ...showData });
-                    } else {
-                        deleteDoc(doc.ref);
+                    } else if (!showData.scheduledDate) {
+                        shows.push({ id: doc.id, ...showData });
                     }
                 });
                 renderShows();
@@ -289,19 +304,22 @@
             const day = document.getElementById('new-date-day').value;
             const year = document.getElementById('new-date-year').value;
             const newEvent = document.getElementById('new-event').value;
+            const scheduleDateTime = document.getElementById('schedule-datetime').value;
             if (month && day && year && newEvent) {
                 const newDate = `${month} ${day}, ${year}`;
                 try {
                     const docRef = await addDoc(collection(db, "shows"), {
                         date: newDate,
-                        event: newEvent
+                        event: newEvent,
+                        scheduledDate: scheduleDateTime
                     });
-                    shows.push({ id: docRef.id, date: newDate, event: newEvent });
+                    shows.push({ id: docRef.id, date: newDate, event: newEvent, scheduledDate: scheduleDateTime });
                     renderShows();
                     document.getElementById('new-date-month').value = '';
                     document.getElementById('new-date-day').value = '';
                     document.getElementById('new-date-year').value = '';
                     document.getElementById('new-event').value = '';
+                    document.getElementById('schedule-datetime').value = '';
 
                     // Show notification
                     const notification = document.getElementById('notification');
