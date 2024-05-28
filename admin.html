@@ -76,6 +76,11 @@
         .show-item .remove-btn:hover {
             background: #ff1a1a;
         }
+        .support-contact {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -107,6 +112,7 @@
         </select>
         <select id="new-date-day">
             <option value="">Select Day</option>
+            <!-- Days will be populated by JavaScript -->
         </select>
         <select id="new-date-year">
             <option value="">Select Year</option>
@@ -119,13 +125,16 @@
             <!-- Show items will be populated here by JavaScript -->
         </div>
         <button onclick="logout()">Logout</button>
+        <div class="support-contact">
+            For support contact Joshua Akseruld
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    
+
         const firebaseConfig = {
             apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
             authDomain: "bg-goods.firebaseapp.com",
@@ -135,14 +144,14 @@
             appId: "1:303687988336:web:d35c7b35c547fea02430b5",
             measurementId: "G-CGFB0GXV5H"
         };
-    
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-    
+
         let shows = [];
         let draggingIndex = null;
-    
+
         document.addEventListener('DOMContentLoaded', () => {
             auth.onAuthStateChanged((user) => {
                 if (user) {
@@ -155,7 +164,7 @@
                 }
             });
         });
-    
+
         async function fetchShows() {
             try {
                 const querySnapshot = await getDocs(collection(db, "shows"));
@@ -168,7 +177,7 @@
                 console.error("Error fetching shows: ", error);
             }
         }
-    
+
         function renderShows() {
             const showsList = document.getElementById('shows-list');
             showsList.innerHTML = '';
@@ -188,15 +197,15 @@
                 showsList.appendChild(showItem);
             });
         }
-    
+
         function handleDragStart(e) {
             draggingIndex = e.target.closest('.show-item').dataset.index;
         }
-    
+
         function handleDragOver(e) {
             e.preventDefault();
         }
-    
+
         function handleDrop(e) {
             e.preventDefault();
             const targetIndex = e.target.closest('.show-item').dataset.index;
@@ -207,7 +216,7 @@
                 saveShows();
             }
         }
-    
+
         async function addShow() {
             const month = document.getElementById('new-date-month').value;
             const day = document.getElementById('new-date-day').value;
@@ -233,7 +242,7 @@
                 alert('Please enter all fields.');
             }
         }
-    
+
         async function removeShow(index) {
             const show = shows[index];
             try {
@@ -244,34 +253,18 @@
                 console.error("Error removing show: ", error);
             }
         }
-    
+
         function populateDays() {
-            const month = document.getElementById('new-date-month').value;
             const daySelect = document.getElementById('new-date-day');
             daySelect.innerHTML = '<option value="">Select Day</option>';
-            const daysInMonth = {
-                'January': 31,
-                'February': 28,
-                'March': 31,
-                'April': 30,
-                'May': 31,
-                'June': 30,
-                'July': 31,
-                'August': 31,
-                'September': 30,
-                'October': 31,
-                'November': 30,
-                'December': 31
-            };
-            const days = daysInMonth[month] || 31;
-            for (let i = 1; i <= days; i++) {
+            for (let i = 1; i <= 31; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 option.text = i;
                 daySelect.appendChild(option);
             }
         }
-    
+
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -286,9 +279,9 @@
                 document.getElementById('error-message').style.display = 'block';
             }
         }
-    
+
         window.login = login;  // Make login function accessible globally
-    
+
         async function logout() {
             try {
                 await signOut(auth);
@@ -298,7 +291,9 @@
                 console.error("Error logging out: ", error);
             }
         }
-    
+
         window.logout = logout;  // Make logout function accessible globally
-    
-    </script>    
+
+    </script>
+</body>
+</html>
