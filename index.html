@@ -14,26 +14,6 @@
             color: #fff;
             overflow-x: hidden;
         }
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0d0d0d;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .loading-screen img {
-            width: 150px;
-            animation: spin 2s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
         .header {
             position: relative;
             text-align: center;
@@ -54,7 +34,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
         }
-        .header-text {
+        .header-content {
             position: relative;
             z-index: 1;
             text-align: center;
@@ -62,6 +42,10 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .header-content img {
+            width: 150px;
+            margin-bottom: 20px;
         }
         .header h1 {
             font-size: 48px;
@@ -75,12 +59,6 @@
             margin: 10px 0 0;
             color: #00ffff;
             text-shadow: 2px 2px #000;
-        }
-        .logo {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 80px;
         }
         .events-heading {
             text-align: center;
@@ -182,18 +160,11 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen">
-        <img src="path/to/head-image.png" alt="Loading">
-    </div>
-
-    <!-- Logo -->
-    <img src="Bghead.png" alt="Logo" class="logo">
-
     <!-- Header Section -->
     <div class="header">
         <div class="header-overlay"></div>
-        <div class="header-text">
+        <div class="header-content">
+            <img src="Bghead.png" alt="Logo">
             <h1>BG GOOD</h1>
             <p>@DJBGGOOD</p>
         </div>
@@ -257,11 +228,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchShows);
-
-        // Hide loading screen after content is loaded
-        window.addEventListener('load', () => {
-            document.querySelector('.loading-screen').style.display = 'none';
-        });
     </script>
 
     <!-- Font Awesome for Social Icons -->
