@@ -121,7 +121,7 @@
     </div>
 
     <script>
-        let shows = JSON.parse(localStorage.getItem('shows')) || [
+        const shows = [
             { date: 'June 1, 2024', event: 'Tunnel Chicago' },
             { date: 'June 5, 2024', event: 'Tao Chicago' },
             { date: 'June 10, 2024', event: 'Sound Bar Chicago' },
@@ -174,7 +174,6 @@
             if (month && day && year && newEvent) {
                 const newDate = `${month} ${day}, ${year}`;
                 shows.push({ date: newDate, event: newEvent });
-                localStorage.setItem('shows', JSON.stringify(shows));
                 renderShows();
                 document.getElementById('new-date-month').value = '';
                 document.getElementById('new-date-day').value = '';
@@ -187,7 +186,6 @@
 
         function removeShow(index) {
             shows.splice(index, 1);
-            localStorage.setItem('shows', JSON.stringify(shows));
             renderShows();
         }
 
@@ -206,7 +204,6 @@
             if (draggedIndex !== targetIndex) {
                 const draggedItem = shows.splice(draggedIndex, 1)[0];
                 shows.splice(targetIndex, 0, draggedItem);
-                localStorage.setItem('shows', JSON.stringify(shows));
                 renderShows();
             }
         }
