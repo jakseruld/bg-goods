@@ -7,32 +7,51 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Orbitron', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #0d0d0d;
             color: #fff;
             overflow-x: hidden;
+            position: relative;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0d0d0d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loading-screen img {
+            width: 150px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .header {
             position: relative;
             text-align: center;
             color: white;
-            background: url('top.png') no-repeat center center/cover;
+            background: url('Cancun.jpg') no-repeat center center/cover;
             height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
             animation: fadeIn 1s ease-in-out;
             background-attachment: fixed;
-        }
-        .header-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
         }
         .header-content {
             position: relative;
@@ -44,29 +63,19 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
         .header-content img {
-            width: 150px;
+            width: 300px; /* Increased size */
             margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 48px;
-            margin: 0;
-            color: #0047ab;
-            text-shadow: 3px 3px #000;
-            font-family: 'Orbitron', sans-serif;
         }
         .header p {
             font-size: 24px;
-            margin: 10px 0 0;
             color: #00ffff;
             text-shadow: 2px 2px #000;
         }
         .events-heading {
             text-align: center;
-            margin: 50px 0 20px;
+            margin: 20px 0;
+            color: #ff69b4;
             font-size: 36px;
-            color: #fff;
-            font-weight: bold;
-            text-shadow: 2px 2px #000;
         }
         .shows-section {
             padding: 20px;
@@ -103,13 +112,14 @@
         .cta-buttons {
             text-align: center;
             margin: 30px 0;
+            position: relative;
         }
         .cta-buttons button {
             padding: 15px 40px;
             font-size: 20px;
             cursor: pointer;
             border: none;
-            background-color: #0047ab;
+            background-color: #ff69b4;
             color: #fff;
             border-radius: 5px;
             margin: 10px;
@@ -117,7 +127,7 @@
             transition: background-color 0.3s ease, transform 0.3s;
         }
         .cta-buttons button:hover {
-            background-color: #0056d2;
+            background-color: #ff1493;
             transform: scale(1.05);
         }
         .social-links {
@@ -126,24 +136,32 @@
         }
         .social-links a {
             margin: 0 15px;
-            color: #00ffff;
+            color: #ff69b4;
             font-size: 30px;
             text-decoration: none;
             transition: color 0.3s;
         }
         .social-links a:hover {
-            color: #0047ab;
+            color: #00ffff;
+        }
+        .face-image {
+            width: 200px;
+            display: block;
+            margin: 30px auto;
+        }
+        .bg-good-image {
+            display: block;
+            margin: 30px auto;
+            width: 100%;
+            max-width: 500px;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 36px;
-            }
-            .header p {
-                font-size: 18px;
+            .header-content img {
+                width: 250px; /* Adjusted for mobile */
             }
             .cta-buttons button {
                 padding: 10px 20px;
@@ -156,27 +174,42 @@
                 font-size: 24px;
                 margin: 0 10px;
             }
+            .face-image {
+                width: 150px;
+            }
+            .bg-good-image {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <img src="Bghead.png" alt="Logo">
+    </div>
+
     <!-- Header Section -->
     <div class="header">
-        <div class="header-overlay"></div>
         <div class="header-content">
-            <img src="Bghead.png" alt="Logo">
-            <h1>BG GOOD</h1>
+            <img src="LogoSolo.png" alt="Main Logo">
             <p>@DJBGGOOD</p>
         </div>
     </div>
 
     <!-- Events Heading -->
-    <div class="events-heading">Events</div>
+    <div class="events-heading">
+        Events
+    </div>
 
     <!-- Shows Section -->
     <div class="shows-section" id="shows-section">
         <!-- Show cards will be populated here by JavaScript -->
     </div>
+
+    <!-- BG Good Image -->
+    <img src="Goooood.png" alt="BG Good" class="bg-good-image">
 
     <!-- Call to Action Buttons -->
     <div class="cta-buttons">
@@ -190,6 +223,7 @@
         <a href="https://twitter.com/DJBGGOOD" target="_blank"><i class="fab fa-twitter"></i></a>
         <a href="https://facebook.com/DJBGGOOD" target="_blank"><i class="fab fa-facebook"></i></a>
     </div>
+
 
     <!-- Firebase Setup -->
     <script type="module">
@@ -228,6 +262,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchShows);
+
+        // Hide loading screen after content is loaded
+        window.addEventListener('load', () => {
+            document.getElementById('loading-screen').classList.add('hidden');
+        });
     </script>
 
     <!-- Font Awesome for Social Icons -->
