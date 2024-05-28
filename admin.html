@@ -48,11 +48,11 @@
             background-color: #2563eb;
             transform: scale(1.05);
         }
-        .shows-list {
+        .shows-list, .merch-list {
             margin: 20px 0;
             text-align: left;
         }
-        .show-item {
+        .show-item, .merch-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -63,18 +63,14 @@
             margin: 5px 0;
             cursor: move;
         }
-        .show-item .drag-handle {
-            cursor: move;
-            margin-right: 10px;
-        }
-        .show-item .remove-btn {
+        .show-item .remove-btn, .merch-item .remove-btn {
             background: #ef4444;
             border: none;
             border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
         }
-        .show-item .remove-btn:hover {
+        .show-item .remove-btn:hover, .merch-item .remove-btn:hover {
             background: #dc2626;
         }
         .support-contact {
@@ -83,23 +79,11 @@
             color: #aaa;
         }
         .support-contact a {
-            color: red;
+            color: #60a5fa;
             text-decoration: none;
         }
         .support-contact a:hover {
             text-decoration: underline;
-        }
-        .notification {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: #38a169;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: none;
-            z-index: 1000;
         }
     </style>
 </head>
@@ -176,24 +160,24 @@
         <div class="shows-list" id="shows-list">
             <!-- Show items will be populated here by JavaScript -->
         </div>
+        <h3>Merchandise Management</h3>
+        <input type="text" id="merch-name" placeholder="Enter merch name">
+        <input type="text" id="merch-price" placeholder="Enter price">
+        <input type="text" id="merch-image" placeholder="Enter image URL">
+        <button onclick="addMerch()">Add Merch</button>
+        <div class="merch-list" id="merch-list">
+            <!-- Merch items will be populated here by JavaScript -->
+        </div>
         <button onclick="logout()">Logout</button>
         <div class="support-contact">
-            For Support Contact <a href="mailto:josh@akseruld.com">Joshua Akseruld</a>
+            Made by and contact for support <a href="mailto:josh@akseruld.com" style="color: red;">Joshua Akseruld</a>
         </div>
-    </div>
-
-    <div class="notification" id="notification">
-        Event created!
-    </div>
-
-    <div class="notification" id="remove-notification" style="background: #e53e3e;">
-        Event removed!
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
@@ -210,7 +194,7 @@
         const db = getFirestore(app);
 
         let shows = [];
-        let draggingIndex = null;
+        let merch = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             auth.onAuthStateChanged((user) => {
@@ -218,6 +202,7 @@
                     document.getElementById('login-panel').style.display = 'none';
                     document.getElementById('welcome-panel').style.display = 'block';
                     fetchShows();
+                    fetchMerch();
                 } else {
                     document.getElementById('login-panel').style.display = 'block';
                     document.getElementById('welcome-panel').style.display = 'none';
@@ -229,15 +214,8 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "shows"));
                 shows = [];
-                const currentDate = new Date();
                 querySnapshot.forEach((doc) => {
-                    const showData = doc.data();
-                    const showDate = new Date(showData.date);
-                    if (showDate >= currentDate) {
-                        shows.push({ id: doc.id, ...showData });
-                    } else {
-                        deleteDoc(doc.ref);
-                    }
+                    shows.push({ id: doc.id, ...doc.data() });
                 });
                 renderShows();
             } catch (error) {
@@ -251,37 +229,12 @@
             shows.forEach((show, index) => {
                 const showItem = document.createElement('div');
                 showItem.className = 'show-item';
-                showItem.draggable = true;
-                showItem.dataset.index = index;
                 showItem.innerHTML = `
-                    <span class="drag-handle">|||</span>
                     <span>${show.date} - ${show.event}</span>
                     <button class="remove-btn" onclick="removeShow(${index})">Remove</button>
                 `;
-                showItem.querySelector('.drag-handle').addEventListener('dragstart', handleDragStart);
-                showItem.addEventListener('dragover', handleDragOver);
-                showItem.addEventListener('drop', handleDrop);
                 showsList.appendChild(showItem);
             });
-        }
-
-        function handleDragStart(e) {
-            draggingIndex = e.target.closest('.show-item').dataset.index;
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const targetIndex = e.target.closest('.show-item').dataset.index;
-            if (draggingIndex !== targetIndex) {
-                const draggedItem = shows.splice(draggingIndex, 1)[0];
-                shows.splice(targetIndex, 0, draggedItem);
-                renderShows();
-                saveShows();
-            }
         }
 
         async function addShow() {
@@ -302,13 +255,6 @@
                     document.getElementById('new-date-day').value = '';
                     document.getElementById('new-date-year').value = '';
                     document.getElementById('new-event').value = '';
-
-                    // Show notification
-                    const notification = document.getElementById('notification');
-                    notification.style.display = 'block';
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                    }, 5000);
                 } catch (error) {
                     console.error("Error adding show: ", error);
                 }
@@ -323,48 +269,101 @@
                 await deleteDoc(doc(db, "shows", show.id));
                 shows.splice(index, 1);
                 renderShows();
-
-                // Show remove notification
-                const removeNotification = document.getElementById('remove-notification');
-                removeNotification.style.display = 'block';
-                setTimeout(() => {
-                    removeNotification.style.display = 'none';
-                }, 5000);
+                alert('Event removed');
             } catch (error) {
                 console.error("Error removing show: ", error);
             }
         }
 
-        async function login() {
+        async function fetchMerch() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "merch"));
+                merch = [];
+                querySnapshot.forEach((doc) => {
+                    merch.push({ id: doc.id, ...doc.data() });
+                });
+                renderMerch();
+            } catch (error) {
+                console.error("Error fetching merch: ", error);
+            }
+        }
+
+        function renderMerch() {
+            const merchList = document.getElementById('merch-list');
+            merchList.innerHTML = '';
+            merch.forEach((item, index) => {
+                const merchItem = document.createElement('div');
+                merchItem.className = 'merch-item';
+                merchItem.innerHTML = `
+                    <span>${item.name} - $${item.price}</span>
+                    <button class="remove-btn" onclick="removeMerch(${index})">Remove</button>
+                `;
+                merchList.appendChild(merchItem);
+            });
+        }
+
+        async function addMerch() {
+            const name = document.getElementById('merch-name').value;
+            const price = document.getElementById('merch-price').value;
+            const image = document.getElementById('merch-image').value;
+            if (name && price && image) {
+                try {
+                    const docRef = await addDoc(collection(db, "merch"), {
+                        name: name,
+                        price: parseFloat(price),
+                        image: image
+                    });
+                    merch.push({ id: docRef.id, name: name, price: parseFloat(price), image: image });
+                    renderMerch();
+                    document.getElementById('merch-name').value = '';
+                    document.getElementById('merch-price').value = '';
+                    document.getElementById('merch-image').value = '';
+                } catch (error) {
+                    console.error("Error adding merch: ", error);
+                }
+            } else {
+                alert('Please enter all fields.');
+            }
+        }
+
+        async function removeMerch(index) {
+            const item = merch[index];
+            try {
+                await deleteDoc(doc(db, "merch", item.id));
+                merch.splice(index, 1);
+                renderMerch();
+                alert('Merch removed');
+            } catch (error) {
+                console.error("Error removing merch: ", error);
+            }
+        }
+
+        function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('login-panel').style.display = 'none';
-                document.getElementById('welcome-panel').style.display = 'block';
-                document.getElementById('error-message').style.display = 'none';
-                fetchShows();
-            } catch (error) {
-                document.getElementById('error-message').innerText = 'Login failed: ' + error.message;
-                document.getElementById('error-message').style.display = 'block';
-            }
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    document.getElementById('error-message').style.display = 'none';
+                    document.getElementById('login-panel').style.display = 'none';
+                    document.getElementById('welcome-panel').style.display = 'block';
+                    fetchShows();
+                    fetchMerch();
+                })
+                .catch(() => {
+                    document.getElementById('error-message').style.display = 'block';
+                });
         }
 
-        window.login = login;  // Make login function accessible globally
-
-        async function logout() {
-            try {
-                await signOut(auth);
-                document.getElementById('login-panel').style.display = 'block';
-                document.getElementById('welcome-panel').style.display = 'none';
-            } catch (error) {
-                console.error("Error logging out: ", error);
-            }
+        function logout() {
+            signOut(auth)
+                .then(() => {
+                    document.getElementById('login-panel').style.display = 'block';
+                    document.getElementById('welcome-panel').style.display = 'none';
+                })
+                .catch((error) => {
+                    console.error("Error logging out: ", error);
+                });
         }
-
-        window.logout = logout;  // Make logout function accessible globally
-        window.addShow = addShow;  // Make addShow function accessible globally
-        window.removeShow = removeShow;  // Make removeShow function accessible globally
     </script>
 </body>
 </html>
