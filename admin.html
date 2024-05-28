@@ -26,7 +26,7 @@
             text-align: center;
             width: 300px;
         }
-        .panel input, .panel select {
+        .panel input, .panel select, .panel textarea {
             display: block;
             margin: 10px auto;
             padding: 10px;
@@ -164,6 +164,7 @@
         <input type="text" id="merch-name" placeholder="Enter merch name">
         <input type="text" id="merch-price" placeholder="Enter price">
         <input type="text" id="merch-image" placeholder="Enter image URL">
+        <textarea id="merch-description" placeholder="Enter description"></textarea>
         <button onclick="addMerch()">Add Merch</button>
         <div class="merch-list" id="merch-list">
             <!-- Merch items will be populated here by JavaScript -->
@@ -306,18 +307,21 @@
             const name = document.getElementById('merch-name').value;
             const price = document.getElementById('merch-price').value;
             const image = document.getElementById('merch-image').value;
-            if (name && price && image) {
+            const description = document.getElementById('merch-description').value;
+            if (name && price && image && description) {
                 try {
                     const docRef = await addDoc(collection(db, "merch"), {
                         name: name,
                         price: parseFloat(price),
-                        image: image
+                        image: image,
+                        description: description
                     });
-                    merch.push({ id: docRef.id, name: name, price: parseFloat(price), image: image });
+                    merch.push({ id: docRef.id, name: name, price: parseFloat(price), image: image, description: description });
                     renderMerch();
                     document.getElementById('merch-name').value = '';
                     document.getElementById('merch-price').value = '';
                     document.getElementById('merch-image').value = '';
+                    document.getElementById('merch-description').value = '';
                 } catch (error) {
                     console.error("Error adding merch: ", error);
                 }
@@ -367,3 +371,4 @@
     </script>
 </body>
 </html>
+
