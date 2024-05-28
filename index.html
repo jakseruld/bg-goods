@@ -131,45 +131,43 @@
         <button onclick="window.open('mailto:booking@djbgood.com')">Book Now</button>
     </div>
 
-
     <!-- Firebase Setup -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
-        authDomain: "bg-goods.firebaseapp.com",
-        projectId: "bg-goods",
-        storageBucket: "bg-goods.appspot.com",
-        messagingSenderId: "303687988336",
-        appId: "1:303687988336:web:d35c7b35c547fea02430b5",
-        measurementId: "G-CGFB0GXV5H"
-      };
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
+            authDomain: "bg-goods.firebaseapp.com",
+            projectId: "bg-goods",
+            storageBucket: "bg-goods.appspot.com",
+            messagingSenderId: "303687988336",
+            appId: "1:303687988336:web:d35c7b35c547fea02430b5",
+            measurementId: "G-CGFB0GXV5H"
+        };
 
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-      async function fetchShows() {
-        const querySnapshot = await getDocs(collection(db, "shows"));
-        const showsSection = document.getElementById('shows-section');
-        showsSection.innerHTML = '';
-        querySnapshot.forEach((doc) => {
-          const show = doc.data();
-          const showCard = document.createElement('div');
-          showCard.className = 'show-card';
-          showCard.innerHTML = `
-              <p class="date">${show.date}</p>
-              <p>${show.event}</p>
-          `;
-          showsSection.appendChild(showCard);
-        });
-      }
+        async function fetchShows() {
+            const querySnapshot = await getDocs(collection(db, "shows"));
+            const showsSection = document.getElementById('shows-section');
+            showsSection.innerHTML = '';
+            querySnapshot.forEach((doc) => {
+                const show = doc.data();
+                const showCard = document.createElement('div');
+                showCard.className = 'show-card';
+                showCard.innerHTML = `
+                    <p class="date">${show.date}</p>
+                    <p>${show.event}</p>
+                `;
+                showsSection.appendChild(showCard);
+            });
+        }
 
-      document.addEventListener('DOMContentLoaded', fetchShows);
+        document.addEventListener('DOMContentLoaded', fetchShows);
     </script>
 </body>
 </html>
