@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BG Good - DJ Landing Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        .header {
+            position: relative;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+        .header img {
+            width: 100%;
+            height: auto;
+            filter: brightness(70%);
+        }
+        .header-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin: 0;
+        }
+        .header p {
+            font-size: 24px;
+            margin: 5px 0 0 0;
+        }
+        .shows-section {
+            text-align: center;
+            padding: 20px;
+            margin: 20px auto;
+            background: #2e2e2e;
+            color: #fff;
+            border-radius: 10px;
+            max-width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .show-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #444;
+            margin: 10px 0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .show-card:hover {
+            transform: scale(1.05);
+            background-color: #555;
+        }
+        .show-card p {
+            margin: 0;
+            font-size: 18px;
+        }
+        .show-card .date {
+            font-weight: bold;
+            color: #fda085;
+        }
+        .cta-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .cta-buttons button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            background-color: #fda085;
+            color: #fff;
+            border-radius: 5px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        .cta-buttons button:hover {
+            background-color: #f6d365;
+            transform: scale(1.05);
+        }
+        .admin-link {
+            text-align: center;
+            margin: 20px;
+        }
+        .admin-link a {
+            color: #fda085;
+            text-decoration: none;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <img src="top.png" alt="BG Good">
+        <div class="header-text">
+            <h1>BG GOOD</h1>
+            <p>@DJBGGOOD</p>
+        </div>
+    </div>
+
+    <!-- Shows Section -->
+    <div class="shows-section" id="shows-section">
+        <!-- Show cards will be populated here by JavaScript -->
+    </div>
+
+    <!-- Call to Action Buttons -->
+    <div class="cta-buttons">
+        <button onclick="window.open('https://instagram.com/DJBGGOOD', '_blank')">Follow on Instagram</button>
+        <button onclick="window.open('mailto:booking@djbgood.com')">Book Now</button>
+    </div>
+
+    <!-- Admin Panel Link -->
+    <div class="admin-link">
+        <a href="#" onclick="openAdminPanel()">Admin Panel</a>
+    </div>
+
+    <script>
+        const shows = JSON.parse(localStorage.getItem('shows')) || [
+            { date: 'June 1, 2024', event: 'Tunnel Chicago' },
+            { date: 'June 5, 2024', event: 'Tao Chicago' },
+            { date: 'June 10, 2024', event: 'Sound Bar Chicago' },
+            { date: 'July 3, 2024', event: 'Summerfest Music Festival' },
+            { date: 'July 10, 2024', event: 'Bloom Beach Festival' }
+        ];
+
+        function renderShows() {
+            const showsSection = document.getElementById('shows-section');
+            showsSection.innerHTML = '';
+            shows.forEach((show, index) => {
+                const showCard = document.createElement('div');
+                showCard.className = 'show-card';
+                showCard.innerHTML = `
+                    <p class="date">${show.date}</p>
+                    <p>${show.event}</p>
+                `;
+                showsSection.appendChild(showCard);
+            });
+        }
+
+        function openAdminPanel() {
+            const username = prompt('Enter username:');
+            const password = prompt('Enter password:');
+            if (username === 'admin' && password === 'password') {
+                window.location.href = 'admin.html';
+            } else {
+                alert('Incorrect username or password.');
+            }
+        }
+
+        renderShows();
+    </script>
+</body>
+</html>
+

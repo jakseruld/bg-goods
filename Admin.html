@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - BG Good</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        .admin-panel {
+            position: relative;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            color: #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .admin-panel h2 {
+            margin-top: 0;
+        }
+        .admin-panel input {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .admin-panel button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #fda085;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        .admin-panel button:hover {
+            background-color: #f6d365;
+            transform: scale(1.05);
+        }
+        .shows-list {
+            margin: 20px 0;
+        }
+        .show-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #444;
+            color: #fff;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .show-item .remove-btn {
+            background: #ff4d4d;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .show-item .remove-btn:hover {
+            background: #ff1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-panel">
+        <h2>Edit Upcoming Dates</h2>
+        <input type="text" id="new-date" placeholder="Enter new date">
+        <input type="text" id="new-event" placeholder="Enter new event">
+        <button onclick="addShow()">Add Show</button>
+        <div class="shows-list" id="shows-list">
+            <!-- Show items will be populated here by JavaScript -->
+        </div>
+        <button onclick="closeAdminPanel()">Close</button>
+    </div>
+
+    <script>
+        let shows = JSON.parse(localStorage.getItem('shows')) || [
+            { date: 'June 1, 2024', event: 'Tunnel Chicago' },
+            { date: 'June 5, 2024', event: 'Tao Chicago' },
+            { date: 'June 10, 2024', event: 'Sound Bar Chicago' },
+            { date: 'July 3, 2024', event: 'Summerfest Music Festival' },
+            { date: 'July 10, 2024', event: 'Bloom Beach Festival' }
+        ];
+
+        function renderShows() {
+            const showsList = document.getElementById('shows-list');
+            showsList.innerHTML = '';
+            shows.forEach((show, index) => {
+                const showItem = document.createElement('div');
+                showItem.className = 'show-item';
+                showItem.innerHTML = `
+                    <span>${show.date} - ${show.event}</span>
+                    <button class="remove-btn" onclick="removeShow(${index})">Remove</button>
+                `;
+                showsList.appendChild(showItem);
+            });
+        }
+
+        function addShow() {
+            const newDate = document.getElementById('new-date').value;
+            const newEvent = document.getElementById('new-event').value;
+            if (newDate && newEvent) {
+                shows.push({ date: newDate, event: newEvent });
+                localStorage.setItem('shows', JSON.stringify(shows));
+                renderShows();
+            } else {
+                alert('Please enter both date and event.');
+            }
+        }
+
+        function removeShow(index) {
+            shows.splice(index, 1);
+            localStorage.setItem('shows', JSON.stringify(shows));
+            renderShows();
+        }
+
+        function closeAdminPanel() {
+            window.location.href = 'index.html';
+        }
+
+        renderShows();
+    </script>
+</body>
+</html>
