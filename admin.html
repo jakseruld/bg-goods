@@ -89,6 +89,18 @@
         .support-contact a:hover {
             text-decoration: underline;
         }
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #38a169;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +180,10 @@
         <div class="support-contact">
             For support contact <a href="mailto:josh@akseruld.com">Joshua Akseruld</a>
         </div>
+    </div>
+
+    <div class="notification" id="notification">
+        Event created!
     </div>
 
     <script type="module">
@@ -275,6 +291,13 @@
                     document.getElementById('new-date-day').value = '';
                     document.getElementById('new-date-year').value = '';
                     document.getElementById('new-event').value = '';
+
+                    // Show notification
+                    const notification = document.getElementById('notification');
+                    notification.style.display = 'block';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 5000);
                 } catch (error) {
                     console.error("Error adding show: ", error);
                 }
