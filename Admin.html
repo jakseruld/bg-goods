@@ -89,7 +89,7 @@
     <div class="panel" id="welcome-panel" style="display: none;">
         <h2>Welcome, Bryan</h2>
         <h3>Edit Upcoming Dates</h3>
-        <select id="new-date-month">
+        <select id="new-date-month" onchange="populateDays()">
             <option value="">Select Month</option>
             <option value="January">January</option>
             <option value="February">February</option>
@@ -106,7 +106,6 @@
         </select>
         <select id="new-date-day">
             <option value="">Select Day</option>
-            ${[...Array(31).keys()].map(i => `<option value="${i + 1}">${i + 1}</option>`).join('')}
         </select>
         <select id="new-date-year">
             <option value="">Select Year</option>
@@ -212,8 +211,34 @@
             }
         }
 
+        function populateDays() {
+            const month = document.getElementById('new-date-month').value;
+            const daySelect = document.getElementById('new-date-day');
+            daySelect.innerHTML = '<option value="">Select Day</option>';
+            const daysInMonth = {
+                'January': 31,
+                'February': 28,
+                'March': 31,
+                'April': 30,
+                'May': 31,
+                'June': 30,
+                'July': 31,
+                'August': 31,
+                'September': 30,
+                'October': 31,
+                'November': 30,
+                'December': 31
+            };
+            const days = daysInMonth[month] || 31;
+            for (let i = 1; i <= days; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.text = i;
+                daySelect.appendChild(option);
+            }
+        }
+
         renderShows();
     </script>
 </body>
 </html>
-
