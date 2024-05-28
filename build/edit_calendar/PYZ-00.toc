@@ -1,5 +1,4 @@
-('/Users/joshuaakseruld/Desktop/your local '
- 'Dj/bg-goods/build/edit_calendar/PYZ-00.pyz',
+('/Users/joshuaakseruld/Desktop/bg-goods/build/edit_calendar/PYZ-00.pyz',
  [('_compat_pickle',
    '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/_compat_pickle.py',
    'PYMODULE'),
