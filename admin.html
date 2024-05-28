@@ -6,7 +6,7 @@
     <title>Admin Panel - BG Good</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #1a1a1a;
@@ -120,14 +120,36 @@
         <button onclick="logout()">Logout</button>
     </div>
 
-    <script>
-        const shows = [
-            { date: 'June 1, 2024', event: 'Tunnel Chicago' },
-            { date: 'June 5, 2024', event: 'Tao Chicago' },
-            { date: 'June 10, 2024', event: 'Sound Bar Chicago' },
-            { date: 'July 3, 2024', event: 'Summerfest Music Festival' },
-            { date: 'July 10, 2024', event: 'Bloom Beach Festival' }
-        ];
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
+            authDomain: "bg-goods.firebaseapp.com",
+            projectId: "bg-goods",
+            storageBucket: "bg-goods.appspot.com",
+            messagingSenderId: "303687988336",
+            appId: "1:303687988336:web:d35c7b35c547fea02430b5",
+            measurementId: "G-CGFB0GXV5H"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const shows = [];
+        let draggingIndex = null;
+
+        async function fetchShows() {
+            const querySnapshot = await getDocs(collection(db, "shows"));
+            querySnapshot.forEach((doc) => {
+                shows.push({ id: doc.id, ...doc.data() });
+            });
+            renderShows();
+        }
 
         function renderShows() {
             const showsList = document.getElementById('shows-list');
@@ -149,31 +171,37 @@
             });
         }
 
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            if (username === 'admin' && password === 'password') {
-                document.getElementById('login-panel').style.display = 'none';
-                document.getElementById('welcome-panel').style.display = 'block';
+        function handleDragStart(e) {
+            draggingIndex = e.target.closest('.show-item').dataset.index;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetIndex = e.target.closest('.show-item').dataset.index;
+            if (draggingIndex !== targetIndex) {
+                const draggedItem = shows.splice(draggingIndex, 1)[0];
+                shows.splice(targetIndex, 0, draggedItem);
                 renderShows();
-            } else {
-                alert('Incorrect username or password.');
+                saveShows();
             }
         }
 
-        function logout() {
-            document.getElementById('login-panel').style.display = 'block';
-            document.getElementById('welcome-panel').style.display = 'none';
-        }
-
-        function addShow() {
+        async function addShow() {
             const month = document.getElementById('new-date-month').value;
             const day = document.getElementById('new-date-day').value;
             const year = document.getElementById('new-date-year').value;
             const newEvent = document.getElementById('new-event').value;
             if (month && day && year && newEvent) {
                 const newDate = `${month} ${day}, ${year}`;
-                shows.push({ date: newDate, event: newEvent });
+                const docRef = await addDoc(collection(db, "shows"), {
+                    date: newDate,
+                    event: newEvent
+                });
+                shows.push({ id: docRef.id, date: newDate, event: newEvent });
                 renderShows();
                 document.getElementById('new-date-month').value = '';
                 document.getElementById('new-date-day').value = '';
@@ -184,28 +212,11 @@
             }
         }
 
-        function removeShow(index) {
+        async function removeShow(index) {
+            const show = shows[index];
+            await deleteDoc(doc(db, "shows", show.id));
             shows.splice(index, 1);
             renderShows();
-        }
-
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.parentElement.dataset.index);
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const draggedIndex = e.dataTransfer.getData('text/plain');
-            const targetIndex = e.target.closest('.show-item').dataset.index;
-            if (draggedIndex !== targetIndex) {
-                const draggedItem = shows.splice(draggedIndex, 1)[0];
-                shows.splice(targetIndex, 0, draggedItem);
-                renderShows();
-            }
         }
 
         function populateDays() {
@@ -235,7 +246,31 @@
             }
         }
 
-        renderShows();
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'admin' && password === 'password') {
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('welcome-panel').style.display = 'block';
+                fetchShows();
+            } else {
+                alert('Incorrect username or password.');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('welcome-panel').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('welcome-panel').style.display = 'block';
+                fetchShows();
+            }
+        });
+
     </script>
 </body>
 </html>

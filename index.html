@@ -6,7 +6,7 @@
     <title>BG Good - DJ Landing Page</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #0d0d0d;
@@ -29,7 +29,6 @@
             background: rgba(0, 0, 0, 0.7);
             padding: 20px;
             border-radius: 10px;
-            animation: fadeIn 2s;
         }
         .header h1 {
             font-size: 48px;
@@ -52,7 +51,6 @@
             border-radius: 10px;
             max-width: 80%;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-            animation: slideUp 2s;
         }
         .show-card {
             display: flex;
@@ -111,14 +109,6 @@
         .social-links a:hover {
             color: #e600ff;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
     </style>
 </head>
 <body>
@@ -140,33 +130,46 @@
         <button onclick="window.open('https://instagram.com/DJBGGOOD', '_blank')">Follow on Instagram</button>
         <button onclick="window.open('mailto:booking@djbgood.com')">Book Now</button>
     </div>
-    
-    <script>
-        const shows = [
-    { date: 'June 1, 2024', event: 'Tunnel Chicago' },
-    { date: 'June 5, 2024', event: 'Tao Chicago' },
-    { date: 'June 10, 2024', event: 'Sound Bar Chicago' },
-    { date: 'July 3, 2024', event: 'Summerfest Music Festival' },
-    { date: 'July 10, 2024', event: 'Bloom Beach Festival' },
-    { date: 'June 1, 2025', event: 'Coachella' },
-        ];
 
-        function renderShows() {
-            const showsSection = document.getElementById('shows-section');
-            showsSection.innerHTML = '';
-            shows.forEach(show => {
-                const showCard = document.createElement('div');
-                showCard.className = 'show-card';
-                showCard.innerHTML = `
-                    <p class="date">${show.date}</p>
-                    <p>${show.event}</p>
-                `;
-                showsSection.appendChild(showCard);
-            });
-        }
 
-        renderShows();
+    <!-- Firebase Setup -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
+        authDomain: "bg-goods.firebaseapp.com",
+        projectId: "bg-goods",
+        storageBucket: "bg-goods.appspot.com",
+        messagingSenderId: "303687988336",
+        appId: "1:303687988336:web:d35c7b35c547fea02430b5",
+        measurementId: "G-CGFB0GXV5H"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      async function fetchShows() {
+        const querySnapshot = await getDocs(collection(db, "shows"));
+        const showsSection = document.getElementById('shows-section');
+        showsSection.innerHTML = '';
+        querySnapshot.forEach((doc) => {
+          const show = doc.data();
+          const showCard = document.createElement('div');
+          showCard.className = 'show-card';
+          showCard.innerHTML = `
+              <p class="date">${show.date}</p>
+              <p>${show.event}</p>
+          `;
+          showsSection.appendChild(showCard);
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', fetchShows);
     </script>
 </body>
 </html>
-
