@@ -94,15 +94,6 @@
             background-color: #f6d365;
             transform: scale(1.05);
         }
-        .admin-link {
-            text-align: center;
-            margin: 20px;
-        }
-        .admin-link a {
-            color: #fda085;
-            text-decoration: none;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
@@ -124,11 +115,6 @@
     <div class="cta-buttons">
         <button onclick="window.open('https://instagram.com/DJBGGOOD', '_blank')">Follow on Instagram</button>
         <button onclick="window.open('mailto:booking@djbgood.com')">Book Now</button>
-    </div>
-
-    <!-- Admin Panel Link -->
-    <div class="admin-link">
-        <a href="#" onclick="openAdminPanel()">Admin Panel</a>
     </div>
 
     <script>
@@ -154,18 +140,7 @@
             });
         }
 
-        function openAdminPanel() {
-            const username = prompt('Enter username:');
-            const password = prompt('Enter password:');
-            if (username === 'admin' && password === 'password') {
-                window.location.href = 'admin.html';
-            } else {
-                alert('Incorrect username or password.');
-            }
-        }
-
         renderShows();
     </script>
 </body>
 </html>
-

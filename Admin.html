@@ -11,29 +11,30 @@
             padding: 0;
             background-color: #1a1a1a;
             color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
         }
-        .admin-panel {
-            position: relative;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
+        .panel {
             background: #fff;
             color: #000;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
         }
-        .admin-panel h2 {
-            margin-top: 0;
-        }
-        .admin-panel input {
+        .panel input, .panel select {
             display: block;
-            margin: 10px 0;
+            margin: 10px auto;
             padding: 10px;
-            width: 100%;
+            width: calc(100% - 40px);
             box-sizing: border-box;
         }
-        .admin-panel button {
-            padding: 10px;
+        .panel button {
+            padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             border: none;
@@ -42,21 +43,28 @@
             border-radius: 5px;
             transition: background-color 0.3s ease, transform 0.3s;
         }
-        .admin-panel button:hover {
+        .panel button:hover {
             background-color: #f6d365;
             transform: scale(1.05);
         }
         .shows-list {
             margin: 20px 0;
+            text-align: left;
         }
         .show-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 10px;
             background: #444;
             color: #fff;
             border-radius: 5px;
             margin: 5px 0;
+            cursor: move;
+        }
+        .show-item .drag-handle {
+            cursor: move;
+            margin-right: 10px;
         }
         .show-item .remove-btn {
             background: #ff4d4d;
@@ -71,15 +79,46 @@
     </style>
 </head>
 <body>
-    <div class="admin-panel">
-        <h2>Edit Upcoming Dates</h2>
-        <input type="text" id="new-date" placeholder="Enter new date">
+    <div class="panel" id="login-panel">
+        <h2>Admin Login</h2>
+        <input type="text" id="username" placeholder="Enter username">
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div class="panel" id="welcome-panel" style="display: none;">
+        <h2>Welcome, Bryan</h2>
+        <h3>Edit Upcoming Dates</h3>
+        <select id="new-date-month">
+            <option value="">Select Month</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+        </select>
+        <select id="new-date-day">
+            <option value="">Select Day</option>
+            ${[...Array(31).keys()].map(i => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+        </select>
+        <select id="new-date-year">
+            <option value="">Select Year</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+        </select>
         <input type="text" id="new-event" placeholder="Enter new event">
         <button onclick="addShow()">Add Show</button>
         <div class="shows-list" id="shows-list">
             <!-- Show items will be populated here by JavaScript -->
         </div>
-        <button onclick="closeAdminPanel()">Close</button>
+        <button onclick="logout()">Logout</button>
     </div>
 
     <script>
@@ -97,23 +136,53 @@
             shows.forEach((show, index) => {
                 const showItem = document.createElement('div');
                 showItem.className = 'show-item';
+                showItem.draggable = true;
+                showItem.dataset.index = index;
                 showItem.innerHTML = `
+                    <span class="drag-handle">|||</span>
                     <span>${show.date} - ${show.event}</span>
                     <button class="remove-btn" onclick="removeShow(${index})">Remove</button>
                 `;
+                showItem.querySelector('.drag-handle').addEventListener('dragstart', handleDragStart);
+                showItem.addEventListener('dragover', handleDragOver);
+                showItem.addEventListener('drop', handleDrop);
                 showsList.appendChild(showItem);
             });
         }
 
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'admin' && password === 'password') {
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('welcome-panel').style.display = 'block';
+                renderShows();
+            } else {
+                alert('Incorrect username or password.');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('welcome-panel').style.display = 'none';
+        }
+
         function addShow() {
-            const newDate = document.getElementById('new-date').value;
+            const month = document.getElementById('new-date-month').value;
+            const day = document.getElementById('new-date-day').value;
+            const year = document.getElementById('new-date-year').value;
             const newEvent = document.getElementById('new-event').value;
-            if (newDate && newEvent) {
+            if (month && day && year && newEvent) {
+                const newDate = `${month} ${day}, ${year}`;
                 shows.push({ date: newDate, event: newEvent });
                 localStorage.setItem('shows', JSON.stringify(shows));
                 renderShows();
+                document.getElementById('new-date-month').value = '';
+                document.getElementById('new-date-day').value = '';
+                document.getElementById('new-date-year').value = '';
+                document.getElementById('new-event').value = '';
             } else {
-                alert('Please enter both date and event.');
+                alert('Please enter all fields.');
             }
         }
 
@@ -123,11 +192,28 @@
             renderShows();
         }
 
-        function closeAdminPanel() {
-            window.location.href = 'index.html';
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.parentElement.dataset.index);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const draggedIndex = e.dataTransfer.getData('text/plain');
+            const targetIndex = e.target.closest('.show-item').dataset.index;
+            if (draggedIndex !== targetIndex) {
+                const draggedItem = shows.splice(draggedIndex, 1)[0];
+                shows.splice(targetIndex, 0, draggedItem);
+                localStorage.setItem('shows', JSON.stringify(shows));
+                renderShows();
+            }
         }
 
         renderShows();
     </script>
 </body>
 </html>
+
