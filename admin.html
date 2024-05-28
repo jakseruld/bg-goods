@@ -125,7 +125,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+    
         const firebaseConfig = {
             apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
             authDomain: "bg-goods.firebaseapp.com",
@@ -135,14 +135,14 @@
             appId: "1:303687988336:web:d35c7b35c547fea02430b5",
             measurementId: "G-CGFB0GXV5H"
         };
-
+    
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
+    
         let shows = [];
         let draggingIndex = null;
-
+    
         document.addEventListener('DOMContentLoaded', () => {
             auth.onAuthStateChanged((user) => {
                 if (user) {
@@ -155,7 +155,7 @@
                 }
             });
         });
-
+    
         async function fetchShows() {
             try {
                 const querySnapshot = await getDocs(collection(db, "shows"));
@@ -168,7 +168,7 @@
                 console.error("Error fetching shows: ", error);
             }
         }
-
+    
         function renderShows() {
             const showsList = document.getElementById('shows-list');
             showsList.innerHTML = '';
@@ -188,15 +188,15 @@
                 showsList.appendChild(showItem);
             });
         }
-
+    
         function handleDragStart(e) {
             draggingIndex = e.target.closest('.show-item').dataset.index;
         }
-
+    
         function handleDragOver(e) {
             e.preventDefault();
         }
-
+    
         function handleDrop(e) {
             e.preventDefault();
             const targetIndex = e.target.closest('.show-item').dataset.index;
@@ -207,7 +207,7 @@
                 saveShows();
             }
         }
-
+    
         async function addShow() {
             const month = document.getElementById('new-date-month').value;
             const day = document.getElementById('new-date-day').value;
@@ -233,7 +233,7 @@
                 alert('Please enter all fields.');
             }
         }
-
+    
         async function removeShow(index) {
             const show = shows[index];
             try {
@@ -244,7 +244,7 @@
                 console.error("Error removing show: ", error);
             }
         }
-
+    
         function populateDays() {
             const month = document.getElementById('new-date-month').value;
             const daySelect = document.getElementById('new-date-day');
@@ -271,7 +271,7 @@
                 daySelect.appendChild(option);
             }
         }
-
+    
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -286,7 +286,9 @@
                 document.getElementById('error-message').style.display = 'block';
             }
         }
-
+    
+        window.login = login;  // Make login function accessible globally
+    
         async function logout() {
             try {
                 await signOut(auth);
@@ -296,6 +298,7 @@
                 console.error("Error logging out: ", error);
             }
         }
-    </script>
-</body>
-</html>
+    
+        window.logout = logout;  // Make logout function accessible globally
+    
+    </script>    
