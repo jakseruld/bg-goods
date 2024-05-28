@@ -18,8 +18,8 @@
             flex-direction: column;
         }
         .panel {
-            background: #fff;
-            color: #000;
+            background: #1e3a8a;
+            color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -32,19 +32,20 @@
             padding: 10px;
             width: calc(100% - 40px);
             box-sizing: border-box;
+            color: #000;
         }
         .panel button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             border: none;
-            background-color: #fda085;
+            background-color: #3b82f6;
             color: #fff;
             border-radius: 5px;
             transition: background-color 0.3s ease, transform 0.3s;
         }
         .panel button:hover {
-            background-color: #f6d365;
+            background-color: #2563eb;
             transform: scale(1.05);
         }
         .shows-list {
@@ -67,19 +68,26 @@
             margin-right: 10px;
         }
         .show-item .remove-btn {
-            background: #ff4d4d;
+            background: #ef4444;
             border: none;
             border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
         }
         .show-item .remove-btn:hover {
-            background: #ff1a1a;
+            background: #dc2626;
         }
         .support-contact {
             margin-top: 20px;
             font-size: 12px;
             color: #aaa;
+        }
+        .support-contact a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        .support-contact a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -95,7 +103,7 @@
     <div class="panel" id="welcome-panel" style="display: none;">
         <h2>Welcome, Bryan</h2>
         <h3>Edit Upcoming Dates</h3>
-        <select id="new-date-month" onchange="populateDays()">
+        <select id="new-date-month">
             <option value="">Select Month</option>
             <option value="January">January</option>
             <option value="February">February</option>
@@ -112,12 +120,44 @@
         </select>
         <select id="new-date-day">
             <option value="">Select Day</option>
-            <!-- Days will be populated by JavaScript -->
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
         </select>
         <select id="new-date-year">
             <option value="">Select Year</option>
             <option value="2024">2024</option>
             <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
         </select>
         <input type="text" id="new-event" placeholder="Enter new event">
         <button onclick="addShow()">Add Show</button>
@@ -126,7 +166,7 @@
         </div>
         <button onclick="logout()">Logout</button>
         <div class="support-contact">
-            For support contact Joshua Akseruld
+            For support contact <a href="mailto:josh@akseruld.com">Joshua Akseruld</a>
         </div>
     </div>
 
@@ -251,17 +291,6 @@
                 renderShows();
             } catch (error) {
                 console.error("Error removing show: ", error);
-            }
-        }
-
-        function populateDays() {
-            const daySelect = document.getElementById('new-date-day');
-            daySelect.innerHTML = '<option value="">Select Day</option>';
-            for (let i = 1; i <= 31; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.text = i;
-                daySelect.appendChild(option);
             }
         }
 
