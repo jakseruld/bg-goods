@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BG Good - DJ Landing Page</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
@@ -18,7 +19,7 @@
             text-align: center;
             color: white;
             background: url('top.png') no-repeat center center/cover;
-            height: 100vh;
+            height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -38,7 +39,7 @@
             z-index: 1;
             text-align: center;
             background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
@@ -47,12 +48,19 @@
             margin: 0;
             color: #0047ab;
             text-shadow: 3px 3px #000;
+            font-family: 'Orbitron', sans-serif;
         }
         .header p {
             font-size: 24px;
             margin: 10px 0 0;
             color: #00ffff;
             text-shadow: 2px 2px #000;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 80px;
         }
         .events-heading {
             text-align: center;
@@ -154,6 +162,9 @@
     </style>
 </head>
 <body>
+    <!-- Logo -->
+    <img src="Bghead.png" alt="Logo" class="logo">
+
     <!-- Header Section -->
     <div class="header">
         <div class="header-overlay"></div>
