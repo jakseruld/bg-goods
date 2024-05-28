@@ -84,6 +84,7 @@
         <input type="text" id="email" placeholder="Enter email">
         <input type="password" id="password" placeholder="Enter password">
         <button onclick="login()">Login</button>
+        <p id="error-message" style="color: red; display: none;">Incorrect username or password. Please try again.</p>
     </div>
 
     <div class="panel" id="welcome-panel" style="display: none;">
@@ -265,10 +266,12 @@
                 .then(() => {
                     document.getElementById('login-panel').style.display = 'none';
                     document.getElementById('welcome-panel').style.display = 'block';
+                    document.getElementById('error-message').style.display = 'none';
                     fetchShows();
                 })
                 .catch((error) => {
-                    alert('Login failed: ' + error.message);
+                    document.getElementById('error-message').innerText = 'Login failed: ' + error.message;
+                    document.getElementById('error-message').style.display = 'block';
                 });
         }
 
