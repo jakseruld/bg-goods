@@ -143,6 +143,19 @@
         let shows = [];
         let draggingIndex = null;
 
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    document.getElementById('login-panel').style.display = 'none';
+                    document.getElementById('welcome-panel').style.display = 'block';
+                    fetchShows();
+                } else {
+                    document.getElementById('login-panel').style.display = 'block';
+                    document.getElementById('welcome-panel').style.display = 'none';
+                }
+            });
+        });
+
         async function fetchShows() {
             try {
                 const querySnapshot = await getDocs(collection(db, "shows"));
@@ -259,41 +272,30 @@
             }
         }
 
-        function login() {
+        async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    document.getElementById('login-panel').style.display = 'none';
-                    document.getElementById('welcome-panel').style.display = 'block';
-                    document.getElementById('error-message').style.display = 'none';
-                    fetchShows();
-                })
-                .catch((error) => {
-                    document.getElementById('error-message').innerText = 'Login failed: ' + error.message;
-                    document.getElementById('error-message').style.display = 'block';
-                });
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('welcome-panel').style.display = 'block';
+                document.getElementById('error-message').style.display = 'none';
+                fetchShows();
+            } catch (error) {
+                document.getElementById('error-message').innerText = 'Login failed: ' + error.message;
+                document.getElementById('error-message').style.display = 'block';
+            }
         }
 
-        function logout() {
-            signOut(auth).then(() => {
+        async function logout() {
+            try {
+                await signOut(auth);
                 document.getElementById('login-panel').style.display = 'block';
                 document.getElementById('welcome-panel').style.display = 'none';
-            });
+            } catch (error) {
+                console.error("Error logging out: ", error);
+            }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    document.getElementById('login-panel').style.display = 'none';
-                    document.getElementById('welcome-panel').style.display = 'block';
-                    fetchShows();
-                } else {
-                    document.getElementById('login-panel').style.display = 'block';
-                    document.getElementById('welcome-panel').style.display = 'none';
-                }
-            });
-        });
     </script>
 </body>
 </html>
