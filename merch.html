@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BG Good - Merch</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        body {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0d0d0d;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .header {
+            position: relative;
+            text-align: center;
+            color: white;
+            background: #0d0d0d;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .header img {
+            width: 200px;
+        }
+        .merch-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .merch-item {
+            background: #1a1a1a;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            width: 200px;
+        }
+        .merch-item img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .merch-item p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .merch-item button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #ff69b4;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s;
+        }
+        .merch-item button:hover {
+            background-color: #ff1493;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="LogoSolo.png" alt="BG Good">
+        <h1>Merch</h1>
+    </div>
+    <div class="merch-section" id="merch-section">
+        <!-- Merch items will be populated here by JavaScript -->
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "bg-goods.firebaseapp.com",
+            projectId: "bg-goods",
+            storageBucket: "bg-goods.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function fetchMerch() {
+            const querySnapshot = await getDocs(collection(db, "merch"));
+            const merchSection = document.getElementById('merch-section');
+            merchSection.innerHTML = '';
+            querySnapshot.forEach((doc) => {
+                const merch = doc.data();
+                const merchItem = document.createElement('div');
+                merchItem.className = 'merch-item';
+                merchItem.innerHTML = `
+                    <img src="${merch.image}" alt="${merch.title}">
+                    <p>${merch.title}</p>
+                    <p>${merch.description}</p>
+                    <p>$${merch.price}</p>
+                    <button onclick="addToCart('${doc.id}')">Add to Cart</button>
+                `;
+                merchSection.appendChild(merchItem);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchMerch);
+
+        function addToCart(id) {
+            alert('Added to cart: ' + id);
+        }
+    </script>
+</body>
+</html>

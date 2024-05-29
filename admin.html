@@ -12,10 +12,79 @@
             background-color: #1a1a1a;
             color: #fff;
             display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            background: #1e3a8a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar .nav-item {
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .sidebar .nav-item:hover, .sidebar .nav-item.active {
+            background: #2563eb;
+        }
+        .sidebar img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+        .sidebar .support-contact {
+            margin-top: auto;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: red;
+        }
+        .sidebar .support-contact a {
+            color: red;
+            text-decoration: none;
+        }
+        .sidebar .support-contact a:hover {
+            text-decoration: underline;
+        }
+        .sidebar .logout {
+            margin-top: 10px;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            background: #ef4444;
+            transition: background 0.3s;
+        }
+        .sidebar .logout:hover {
+            background: #dc2626;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .header h2 {
+            margin: 0;
         }
         .panel {
             background: #1e3a8a;
@@ -25,8 +94,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
             width: 300px;
+            display: none;
         }
-        .panel input, .panel select, .panel textarea {
+        .panel.active {
+            display: block;
+        }
+        .panel input, .panel textarea, .panel select {
             display: block;
             margin: 10px auto;
             padding: 10px;
@@ -48,11 +121,11 @@
             background-color: #2563eb;
             transform: scale(1.05);
         }
-        .shows-list, .merch-list {
+        .shows-list, .product-list {
             margin: 20px 0;
             text-align: left;
         }
-        .show-item, .merch-item {
+        .show-item, .product-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -61,124 +134,142 @@
             color: #fff;
             border-radius: 5px;
             margin: 5px 0;
-            cursor: move;
         }
-        .show-item .remove-btn, .merch-item .remove-btn {
+        .show-item .drag-handle, .product-item .drag-handle {
+            cursor: move;
+            margin-right: 10px;
+        }
+        .show-item .remove-btn, .product-item .remove-btn {
             background: #ef4444;
             border: none;
             border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
         }
-        .show-item .remove-btn:hover, .merch-item .remove-btn:hover {
+        .show-item .remove-btn:hover, .product-item .remove-btn:hover {
             background: #dc2626;
         }
-        .support-contact {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #aaa;
-        }
-        .support-contact a {
-            color: #60a5fa;
-            text-decoration: none;
-        }
-        .support-contact a:hover {
-            text-decoration: underline;
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #38a169;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
-    <div class="panel" id="login-panel">
-        <h2>Admin Login</h2>
-        <input type="text" id="email" placeholder="Enter email">
-        <input type="password" id="password" placeholder="Enter password">
-        <button onclick="login()">Login</button>
-        <p id="error-message" style="color: red; display: none;">Incorrect username or password. Please try again.</p>
+    <div class="sidebar">
+        <img src="Smiley.png" alt="BG Good Smile">
+        <div class="nav-item active" data-tab="shows-panel">Shows</div>
+        <div class="nav-item" data-tab="products-panel">Merch</div>
+        <div class="support-contact">
+            <a href="mailto:Josh@akseruld.com">Contact Joshua Akseruld For Support</a>
+        </div>
+        <div class="logout" onclick="logout()">Logout</div>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <h2>Welcome, Bryan</h2>
+        </div>
+        <div class="panel active" id="shows-panel">
+            <h3>Edit Upcoming Dates</h3>
+            <select id="new-date-month">
+                <option value="">Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+            <select id="new-date-day">
+                <option value="">Select Day</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+            </select>
+            <select id="new-date-year">
+                <option value="">Select Year</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
+            <input type="text" id="new-event" placeholder="Enter new event">
+            <input type="text" id="new-city" placeholder="Enter city">
+            <button onclick="addShow()">Add Show</button>
+            <div class="shows-list" id="shows-list">
+                <!-- Show items will be populated here by JavaScript -->
+            </div>
+        </div>
+
+        <div class="panel" id="products-panel">
+            <h3>Add New Product</h3>
+            <input type="text" id="product-title" placeholder="Product Title">
+            <textarea id="product-description" placeholder="Product Description"></textarea>
+            <input type="number" id="product-price" placeholder="Product Price">
+            <input type="file" id="product-image" accept="image/*">
+            <button onclick="addProduct()">Add Product</button>
+            <div class="product-list" id="product-list">
+                <!-- Product items will be populated here by JavaScript -->
+            </div>
+            <p style="color: red; font-size: 20px;">Under Construction</p>
+        </div>
     </div>
 
-    <div class="panel" id="welcome-panel" style="display: none;">
-        <h2>Welcome, Bryan</h2>
-        <h3>Edit Upcoming Dates</h3>
-        <select id="new-date-month">
-            <option value="">Select Month</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
-            <option value="August">August</option>
-            <option value="September">September</option>
-            <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
-        </select>
-        <select id="new-date-day">
-            <option value="">Select Day</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-            <option value="18">18</option>
-            <option value="19">19</option>
-            <option value="20">20</option>
-            <option value="21">21</option>
-            <option value="22">22</option>
-            <option value="23">23</option>
-            <option value="24">24</option>
-            <option value="25">25</option>
-            <option value="26">26</option>
-            <option value="27">27</option>
-            <option value="28">28</option>
-            <option value="29">29</option>
-            <option value="30">30</option>
-            <option value="31">31</option>
-        </select>
-        <select id="new-date-year">
-            <option value="">Select Year</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-            <option value="2027">2027</option>
-        </select>
-        <input type="text" id="new-event" placeholder="Enter new event">
-        <button onclick="addShow()">Add Show</button>
-        <div class="shows-list" id="shows-list">
-            <!-- Show items will be populated here by JavaScript -->
-        </div>
-        <h3>Merchandise Management</h3>
-        <input type="text" id="merch-name" placeholder="Enter merch name">
-        <input type="text" id="merch-price" placeholder="Enter price">
-        <input type="text" id="merch-image" placeholder="Enter image URL">
-        <textarea id="merch-description" placeholder="Enter description"></textarea>
-        <button onclick="addMerch()">Add Merch</button>
-        <div class="merch-list" id="merch-list">
-            <!-- Merch items will be populated here by JavaScript -->
-        </div>
-        <button onclick="logout()">Logout</button>
-        <div class="support-contact">
-            Made by and contact for support <a href="mailto:josh@akseruld.com" style="color: red;">Joshua Akseruld</a>
-        </div>
+    <div class="notification" id="notification">
+        Event created!
+    </div>
+
+    <div class="notification" id="remove-notification" style="background: #e53e3e;">
+        Event removed!
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCWHidPE2pi0aGemT29VGZd6qKr2Exg58w",
@@ -193,21 +284,34 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let shows = [];
-        let merch = [];
+        let products = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     document.getElementById('login-panel').style.display = 'none';
-                    document.getElementById('welcome-panel').style.display = 'block';
+                    document.getElementById('admin-panels').style.display = 'flex';
                     fetchShows();
-                    fetchMerch();
+                    fetchProducts();
                 } else {
-                    document.getElementById('login-panel').style.display = 'block';
-                    document.getElementById('welcome-panel').style.display = 'none';
+                    document.getElementById('login-panel').style.display = 'flex';
+                    document.getElementById('admin-panels').style.display = 'none';
                 }
+            });
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    const panels = document.querySelectorAll('.panel');
+                    panels.forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(item.dataset.tab).classList.add('active');
+                });
             });
         });
 
@@ -215,8 +319,15 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "shows"));
                 shows = [];
+                const currentDate = new Date();
                 querySnapshot.forEach((doc) => {
-                    shows.push({ id: doc.id, ...doc.data() });
+                    const showData = doc.data();
+                    const showDate = new Date(showData.date);
+                    if (showDate >= currentDate) {
+                        shows.push({ id: doc.id, ...showData });
+                    } else {
+                        deleteDoc(doc.ref);
+                    }
                 });
                 renderShows();
             } catch (error) {
@@ -230,12 +341,36 @@
             shows.forEach((show, index) => {
                 const showItem = document.createElement('div');
                 showItem.className = 'show-item';
+                showItem.draggable = true;
+                showItem.dataset.index = index;
                 showItem.innerHTML = `
-                    <span>${show.date} - ${show.event}</span>
+                    <span class="drag-handle">|||</span>
+                    <span>${show.date} - ${show.event} - ${show.city}</span>
                     <button class="remove-btn" onclick="removeShow(${index})">Remove</button>
                 `;
+                showItem.querySelector('.drag-handle').addEventListener('dragstart', handleDragStart);
+                showItem.addEventListener('dragover', handleDragOver);
+                showItem.addEventListener('drop', handleDrop);
                 showsList.appendChild(showItem);
             });
+        }
+
+        function handleDragStart(e) {
+            draggingIndex = e.target.closest('.show-item').dataset.index;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetIndex = e.target.closest('.show-item').dataset.index;
+            if (draggingIndex !== targetIndex) {
+                const draggedItem = shows.splice(draggingIndex, 1)[0];
+                shows.splice(targetIndex, 0, draggedItem);
+                renderShows();
+            }
         }
 
         async function addShow() {
@@ -243,19 +378,24 @@
             const day = document.getElementById('new-date-day').value;
             const year = document.getElementById('new-date-year').value;
             const newEvent = document.getElementById('new-event').value;
-            if (month && day && year && newEvent) {
+            const newCity = document.getElementById('new-city').value;
+            if (month && day && year && newEvent && newCity) {
                 const newDate = `${month} ${day}, ${year}`;
                 try {
                     const docRef = await addDoc(collection(db, "shows"), {
                         date: newDate,
-                        event: newEvent
+                        event: newEvent,
+                        city: newCity
                     });
-                    shows.push({ id: docRef.id, date: newDate, event: newEvent });
+                    shows.push({ id: docRef.id, date: newDate, event: newEvent, city: newCity });
                     renderShows();
                     document.getElementById('new-date-month').value = '';
                     document.getElementById('new-date-day').value = '';
                     document.getElementById('new-date-year').value = '';
                     document.getElementById('new-event').value = '';
+                    document.getElementById('new-city').value = '';
+
+                    showNotification('Event created!');
                 } catch (error) {
                     console.error("Error adding show: ", error);
                 }
@@ -270,105 +410,132 @@
                 await deleteDoc(doc(db, "shows", show.id));
                 shows.splice(index, 1);
                 renderShows();
-                alert('Event removed');
+
+                showNotification('Event removed!', true);
             } catch (error) {
                 console.error("Error removing show: ", error);
             }
         }
 
-        async function fetchMerch() {
+        async function fetchProducts() {
             try {
                 const querySnapshot = await getDocs(collection(db, "merch"));
-                merch = [];
+                products = [];
                 querySnapshot.forEach((doc) => {
-                    merch.push({ id: doc.id, ...doc.data() });
+                    products.push({ id: doc.id, ...doc.data() });
                 });
-                renderMerch();
+                renderProducts();
             } catch (error) {
-                console.error("Error fetching merch: ", error);
+                console.error("Error fetching products: ", error);
             }
         }
 
-        function renderMerch() {
-            const merchList = document.getElementById('merch-list');
-            merchList.innerHTML = '';
-            merch.forEach((item, index) => {
-                const merchItem = document.createElement('div');
-                merchItem.className = 'merch-item';
-                merchItem.innerHTML = `
-                    <span>${item.name} - $${item.price}</span>
-                    <button class="remove-btn" onclick="removeMerch(${index})">Remove</button>
+        function renderProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            products.forEach((product, index) => {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item';
+                productItem.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}">
+                    <span>${product.title}</span>
+                    <span>$${product.price}</span>
+                    <button class="remove-btn" onclick="removeProduct(${index})">Remove</button>
                 `;
-                merchList.appendChild(merchItem);
+                productList.appendChild(productItem);
             });
         }
 
-        async function addMerch() {
-            const name = document.getElementById('merch-name').value;
-            const price = document.getElementById('merch-price').value;
-            const image = document.getElementById('merch-image').value;
-            const description = document.getElementById('merch-description').value;
-            if (name && price && image && description) {
+        async function addProduct() {
+            const title = document.getElementById('product-title').value;
+            const description = document.getElementById('product-description').value;
+            const price = document.getElementById('product-price').value;
+            const imageFile = document.getElementById('product-image').files[0];
+
+            if (title && description && price && imageFile) {
                 try {
+                    const storageRef = ref(storage, 'product-images/' + imageFile.name);
+                    await uploadBytes(storageRef, imageFile);
+                    const imageUrl = await getDownloadURL(storageRef);
+
                     const docRef = await addDoc(collection(db, "merch"), {
-                        name: name,
-                        price: parseFloat(price),
-                        image: image,
-                        description: description
+                        title,
+                        description,
+                        price,
+                        image: imageUrl
                     });
-                    merch.push({ id: docRef.id, name: name, price: parseFloat(price), image: image, description: description });
-                    renderMerch();
-                    document.getElementById('merch-name').value = '';
-                    document.getElementById('merch-price').value = '';
-                    document.getElementById('merch-image').value = '';
-                    document.getElementById('merch-description').value = '';
+
+                    products.push({ id: docRef.id, title, description, price, image: imageUrl });
+                    renderProducts();
+
+                    document.getElementById('product-title').value = '';
+                    document.getElementById('product-description').value = '';
+                    document.getElementById('product-price').value = '';
+                    document.getElementById('product-image').value = '';
+
+                    showNotification('Product created!');
                 } catch (error) {
-                    console.error("Error adding merch: ", error);
+                    console.error("Error adding product: ", error);
                 }
             } else {
                 alert('Please enter all fields.');
             }
         }
 
-        async function removeMerch(index) {
-            const item = merch[index];
+        async function removeProduct(index) {
+            const product = products[index];
             try {
-                await deleteDoc(doc(db, "merch", item.id));
-                merch.splice(index, 1);
-                renderMerch();
-                alert('Merch removed');
+                await deleteDoc(doc(db, "merch", product.id));
+                products.splice(index, 1);
+                renderProducts();
+
+                showNotification('Product removed!', true);
             } catch (error) {
-                console.error("Error removing merch: ", error);
+                console.error("Error removing product: ", error);
             }
         }
 
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    document.getElementById('error-message').style.display = 'none';
-                    document.getElementById('login-panel').style.display = 'none';
-                    document.getElementById('welcome-panel').style.display = 'block';
-                    fetchShows();
-                    fetchMerch();
-                })
-                .catch(() => {
-                    document.getElementById('error-message').style.display = 'block';
-                });
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById(isError ? 'remove-notification' : 'notification');
+            notification.innerText = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
         }
 
-        function logout() {
-            signOut(auth)
-                .then(() => {
-                    document.getElementById('login-panel').style.display = 'block';
-                    document.getElementById('welcome-panel').style.display = 'none';
-                })
-                .catch((error) => {
-                    console.error("Error logging out: ", error);
-                });
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('admin-panels').style.display = 'flex';
+                document.getElementById('error-message').style.display = 'none';
+                fetchShows();
+                fetchProducts();
+            } catch (error) {
+                document.getElementById('error-message').innerText = 'Login failed: ' + error.message;
+                document.getElementById('error-message').style.display = 'block';
+            }
         }
+
+        async function logout() {
+            try {
+                await signOut(auth);
+                document.getElementById('login-panel').style.display = 'flex';
+                document.getElementById('admin-panels').style.display = 'none';
+            } catch (error) {
+                console.error("Error logging out: ", error);
+            }
+        }
+
+        window.login = login;
+        window.logout = logout;
+        window.addShow = addShow;
+        window.removeShow = removeShow;
+        window.addProduct = addProduct;
+        window.removeProduct = removeProduct;
     </script>
 </body>
 </html>
-
